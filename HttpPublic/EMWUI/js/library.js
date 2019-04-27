@@ -1,4 +1,36 @@
-﻿var loadingMovieList;
+var loadingMovieList;
+//ライブラリをファイルの更新日時の古い順に並べる
+function dateSort() {
+    var ulTag = document.getElementById('sortSection');
+    var nodeList = ulTag.getElementsByTagName('li');
+    
+    var array = Array.prototype.slice.call(nodeList);
+    
+    function compareText (a,b) {
+        var aa = a.getElementsByClassName('sortItem');
+        if(aa.item('sortItem') != null){
+            var aaa = aa.item('sortItem').textContent;
+        }else{ return 0; }
+        
+        var bb = b.getElementsByClassName('sortItem');
+        if(bb.item('sortItem') != null){
+            var bbb = bb.namedItem('sortItem').textContent;
+        }else{ return 0; }
+        
+        if (aaa > bbb)
+            return 1;
+        else if (aaa < bbb)
+            return -1;
+        return 0;
+    }
+    
+    array.sort(compareText);
+    
+    for (var i=0; i<array.length; i++) {
+        ulTag.appendChild(ulTag.removeChild(array[i]))
+    }
+}
+
 //ライブラリ一覧取得
 function getMovieList(Snack){
 	loadingMovieList = true;
@@ -64,6 +96,7 @@ function folder(){
 				found = true;
 				$(this).children('dir, file').each(function(){
 					var name = $(this).children('name').text();
+					var date = $(this).children('date').text();
 					var obj = $((ViewMode == 'grid' ? '<div>' : '<li>'));
 					if ($(this).prop('tagName') == 'dir'){
 						obj.addClass('folder').data('id', $(this).children('id').text());
@@ -87,6 +120,7 @@ function folder(){
 					}else{
 						var data = {
 							name: name,
+							date: date,
 							path: $(this).children('path').text(),
 							public: $(this).children('public').length > 0
 						};
@@ -117,12 +151,12 @@ function folder(){
 							obj.addClass('mdl-list__item').append(
 								$('<span>', {class: 'mdl-list__item-primary-content', append: [
 									avatar,
-									$('<span>', {text: name}) ]}) );
+									$('<span>', {text: name}), $('<span>', {class: 'sortItem', id: 'sortItem', text: date}) ]}));
 						}
 						$('#file').append(obj);
 					}
 				});
-				$('#file li').wrapAll('<ul class="main-content mdl-list mdl-cell mdl-cell--12-col mdl-shadow--4dp">');
+				$('#file li').wrapAll('<ul id="sortSection" class="main-content mdl-list mdl-cell mdl-cell--12-col mdl-shadow--4dp">');
 
 				var name = $(this).children('name').text();
 				$('.mdl-layout__header-row .mdl-layout-title').text(name);
@@ -154,6 +188,8 @@ function folder(){
 			};
 			notification.MaterialSnackbar.showSnackbar(data);
 		}
+        //ソートの実行
+        dateSort();
 	}else{
 		notification.MaterialSnackbar.showSnackbar({message: 'ライブラリを更新中です。', timeout: 1000});
 	}
