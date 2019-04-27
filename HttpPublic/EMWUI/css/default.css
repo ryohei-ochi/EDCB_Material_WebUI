@@ -1,4 +1,4 @@
-﻿@media (pointer: fine) {
+@media (pointer: fine) {
   ::-webkit-scrollbar {
     width: 7px;
     height: 7px;
@@ -26,7 +26,10 @@
   #onair {
     padding: 0; } }
 
-
+/*更新日時を非表示*/
+.sortItem {
+    display: none;
+}
 
 /*セレクト*/
 select {
